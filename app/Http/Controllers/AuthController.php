@@ -33,7 +33,16 @@ class AuthController extends Controller
         $user['token'] = $user->createToken('token')->plainTextToken;
 
 
-        $cookie = cookie('jwt', $user['token'], 60);
+        $cookie = cookie('jwt', $user['token'], 30, '/', null, true, false);
+        // $cookie= cookie(
+        //     'jwt',
+        //     $user['token'],
+        //     30,
+        //     '/',
+        //     null,
+        //     false,
+        //     false
+        // );
         return response([
             'message' => 'Success',
             'content' => $user
@@ -46,16 +55,31 @@ class AuthController extends Controller
 
     public function user(){
         
-        return Auth::user();
+        $user = Auth::user();
+        $user['token'] = $user->createToken('token')->plainTextToken;
+        return $user;
 
         // return 'Authenticated user';
     }
 
-    public function logout(){
-        $cookie = \Cookie::forget('jwt');
+    // public function logout(){
+    //     $cookie = \Cookie::forget('jwt');
 
+    //     return response([
+    //         'message' => 'Success'
+    //     ]) ->withCookie($cookie);
+    // }
+
+    public function logout(Request $request) {
+        // Forget the JWT cookie
+        $cookie = \Cookie::forget('jwt');
+    
+        // Optionally invalidate the session
+        // auth()->logout();
+    
         return response([
             'message' => 'Success'
-        ]) ->withCookie($cookie);
+        ])->withCookie(cookie()->make('jwt', '', -1));
     }
+
 }

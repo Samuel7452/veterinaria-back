@@ -23,4 +23,14 @@ class User extends Authenticatable
         'password'
     ];
 
+    public function pets()
+    {
+        return $this->hasMany(Pet::class);
+    }
+
+    public function role()
+    {
+        return $this->belongsTo(Role::class);
+    }
+
 }

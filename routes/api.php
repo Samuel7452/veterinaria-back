@@ -20,19 +20,17 @@ use Illuminate\Support\Facades\Route;
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
 Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
 
-Route::middleware('auth:sanctum')->group(function() {
+Route::middleware('auth:sanctum')->group(function () {
     
     Route::get('user', [\App\Http\Controllers\AuthController::class, 'user']);
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
+    
+    Route::get('pet', [\App\Http\Controllers\PetController::class, 'pet']);
+    Route::post('pet/create', [\App\Http\Controllers\PetController::class, 'create']);
+    Route::patch('pet/update/{pet}', [\App\Http\Controllers\PetController::class, 'update']);
+    Route::delete('pet/delete/{pet}', [\App\Http\Controllers\PetController::class, 'delete']);
 });
 
-
-// Route::get(uri:'user', [\app\Http\controllers\AuthController::class, 'user']);
-
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-
-// Route::post('users/create', [UserController::class, 'create'])->name('users.create');
+Route::middleware(['auth', 'admin'])->group(function () {
+    Route::get('/users', [\App\Http\Controllers\UserController::class, 'index']);
+});
