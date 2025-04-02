@@ -11,11 +11,13 @@ class PetController extends Controller
     public function pet()
     {
         $user = Auth::user();
-        if ($user['role_id'] == 3) {
-            return response()->json(Pet::all());
+    
+        if ($user->role_id == 3) { // Si es Admin (role_id = 3), listar todas las mascotas con su dueño
+            return response()->json(Pet::with('user:id,name')->get());
         }
-
-        $pets = $user->pets;
+    
+        // Si es un usuario normal, solo listar sus propias mascotas
+        $pets = $user->pets()->with('user:id,name')->get();
         return response()->json($pets);
     }
 
