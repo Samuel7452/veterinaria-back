@@ -41,12 +41,8 @@ class PetController extends Controller
                 try {
 
                     $file = $request->file('image');
-                    // $image = base64_encode($file);
-                    // return response(1);
-                    // $image = base64_encode(file_get_contents($request->file('image')->pat‌​h()));
                     $image = base64_encode(file_get_contents($request->file('image')));
-                    // return response($image);
-                    // echo $image;
+
     
     
                 } catch (FileNotFoundException $e) {
@@ -54,10 +50,9 @@ class PetController extends Controller
     
                 }
             }
+        } else {
+            $image = null;
         }
-        
-
-        // $imageBase64 = base64_encode(file_get_contents($request->file('image')->path()));
 
         $pet = Pet::create([
             'name' => $request->name,
@@ -67,7 +62,6 @@ class PetController extends Controller
             'user_id' => $user['id'],
             'image' => $image
         ]);
-        // $pet = Auth::user()->pets()->create($validatedData);
 
         return response()->json($pet, 201);
     }
@@ -99,7 +93,7 @@ class PetController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        // $pet->delete();
+        $pet->delete();
 
         return response()->json(['message' => 'Pet deleted successfully']);
     }
