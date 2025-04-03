@@ -26,8 +26,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
     
     Route::get('pet', [\App\Http\Controllers\PetController::class, 'pet']);
+    Route::get('pet/get/{pet}', [\App\Http\Controllers\PetController::class, 'get']);
     Route::post('pet/create', [\App\Http\Controllers\PetController::class, 'create']);
-    Route::patch('pet/update/{pet}', [\App\Http\Controllers\PetController::class, 'update']);
+    Route::post('pet/update/{pet}', [\App\Http\Controllers\PetController::class, 'update']);
     Route::delete('pet/delete/{pet}', [\App\Http\Controllers\PetController::class, 'delete']);
 });
 

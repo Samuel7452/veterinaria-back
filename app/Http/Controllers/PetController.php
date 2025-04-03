@@ -73,18 +73,6 @@ class PetController extends Controller
         return response()->json($pet);
     }
 
-    public function update(Request $request, Pet $pet)
-    {
-        $user = Auth::user();
-        if ($pet->user_id != $user['id'] || $user['role_id'] == 2) {
-            return response()->json(['error' => 'Unauthorized '], 403);
-        }
-
-        $pet->update($request->all());
-
-        return response()->json($pet);
-    }
-
     public function delete(Pet $pet)
     {
         $user = Auth::user();
@@ -97,4 +85,90 @@ class PetController extends Controller
 
         return response()->json(['message' => 'Pet deleted successfully']);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    public function update(Request $request, $id)
+    {
+        // Buscar la mascota por ID
+        $pet = Pet::find($id);
+
+        if (!$pet) {
+            return response()->json(['message' => 'Pet not found'], 404);
+        }
+
+        // Validar los datos recibidos
+        // $validatedData = $request->validate([
+        //     'name' => 'required|string|max:255',
+        //     'species' => 'required|string|max:255',
+        //     'breed' => 'nullable|string|max:255',
+        //     'birth_date' => 'nullable|date',
+        //     'image' => 'nullable|image|max:2048'
+        // ]);
+
+        // Actualizar los campos
+        if ($request->has('name')) {
+            $pet->name = $request->input('name');
+        }
+        if ($request->has('species')) {
+            $pet->species = $request->input('species');
+        }
+        if ($request->has('breed')) {
+            $pet->breed = $request->input('breed');
+        }
+        if ($request->has('birth_date')) {
+            $pet->birth_date = $request->input('birth_date');
+        }
+        if ($request->has('birth_date')) {
+            $pet->birth_date = $request->input('birth_date');
+        }
+
+        // Manejar la imagen si existe en el request
+        if ($request->hasFile('image')) {
+            // $imagePath = $request->file('image')->store('pets', 'public');
+            $file = $request->file('image');
+            $image = base64_encode(file_get_contents($request->file('image')));
+            $pet->image = $image;
+        }
+
+        // Guardar los cambios
+        $pet->save();
+        return response()->json($pet, 201);
+
+        // return response()->json(['message' => 'Pet updated successfully', 'pet' => $pet], 200);
+    }
+
+
+
+
+
+
+
+
+
+
+
 }
