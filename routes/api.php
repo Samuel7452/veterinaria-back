@@ -23,6 +23,8 @@ Route::post('register', [\App\Http\Controllers\AuthController::class, 'register'
 Route::middleware('auth:sanctum')->group(function () {
     
     Route::get('user', [\App\Http\Controllers\AuthController::class, 'user']);
+    Route::get('user/index', [\App\Http\Controllers\UserController::class, 'index']);
+    Route::patch('user/edit/{user}', [\App\Http\Controllers\UserController::class, 'update']);
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
     
     Route::get('pet', [\App\Http\Controllers\PetController::class, 'pet']);

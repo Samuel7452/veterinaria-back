@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class IncreaseImageSizeOnPetsTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class IncreaseImageSizeOnPetsTable extends Migration
      */
     public function up()
     {
-        Schema::table('pets', function (Blueprint $table) {
-            $table->string('image', 999999999)->change();
+        Schema::create('help_relation', function (Blueprint $table) {
+            $table->unsignedInteger('help_topic_id');
+            $table->unsignedInteger('help_keyword_id');
+
+            $table->primary(['help_keyword_id', 'help_topic_id']);
         });
     }
 
@@ -25,8 +28,6 @@ class IncreaseImageSizeOnPetsTable extends Migration
      */
     public function down()
     {
-        Schema::table('pets', function (Blueprint $table) {
-            $table->string('image', 255)->change();
-        });
+        Schema::dropIfExists('help_relation');
     }
-}
+};

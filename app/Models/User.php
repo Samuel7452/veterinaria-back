@@ -16,6 +16,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'is_active'
     ];
 
 
@@ -28,9 +29,9 @@ class User extends Authenticatable
         return $this->hasMany(Pet::class);
     }
 
-    public function role()
+    public function userType()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(UserType::class, 'user_type_id');
     }
 
 }

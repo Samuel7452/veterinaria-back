@@ -12,7 +12,7 @@ class PetController extends Controller
     {
         $user = Auth::user();
     
-        if ($user->role_id == 3) { // Si es Admin (role_id = 3), listar todas las mascotas con su dueño
+        if ($user->user_type_id == 3) { // Si es Admin (user_type_id = 3), listar todas las mascotas con su dueño
             return response()->json(Pet::with('user:id,name')->get());
         }
     
@@ -24,7 +24,13 @@ class PetController extends Controller
     public function create(Request $request)
     {
         $user = Auth::user();
-        if ($user['role_id'] == 2) {
+        if ($user['is_active']==false) {
+            return response([
+                'message' => 'Invalid credentials'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($user['user_type_id'] == 2) {
             return response()->json(['error' => 'Unauthorized '], 403);
         }
         $validatedData = $request->validate([
@@ -76,8 +82,14 @@ class PetController extends Controller
     public function delete(Pet $pet)
     {
         $user = Auth::user();
-        // return response()->json(['message' => $user['role_id']]);
-        if ($pet->user_id !== $user['id'] && $user['role_id'] != 3 || $user['role_id'] == 2 && $user['role_id'] != 3) {
+        if ($user['is_active']==false) {
+            return response([
+                'message' => 'Invalid credentials'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
+        // return response()->json(['message' => $user['user_type_id']]);
+        if ($pet->user_id !== $user['id'] && $user['user_type_id'] != 3 || $user['user_type_id'] == 2 && $user['user_type_id'] != 3) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -85,31 +97,6 @@ class PetController extends Controller
 
         return response()->json(['message' => 'Pet deleted successfully']);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     public function update(Request $request, $id)
     {
@@ -120,14 +107,21 @@ class PetController extends Controller
             return response()->json(['message' => 'Pet not found'], 404);
         }
 
+        $user = Auth::user();
+        if ($user['is_active']==false) {
+            return response([
+                'message' => 'Invalid credentials'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         // Validar los datos recibidos
-        // $validatedData = $request->validate([
-        //     'name' => 'required|string|max:255',
-        //     'species' => 'required|string|max:255',
-        //     'breed' => 'nullable|string|max:255',
-        //     'birth_date' => 'nullable|date',
-        //     'image' => 'nullable|image|max:2048'
-        // ]);
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255',
+            'species' => 'required|string|max:255',
+            'breed' => 'nullable|string|max:255',
+            'birth_date' => 'nullable|date',
+            'image' => 'nullable|image|max:2048'
+        ]);
 
         // Actualizar los campos
         if ($request->has('name')) {

@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddImageToPetTable extends Migration
+return new class extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,11 @@ class AddImageToPetTable extends Migration
      */
     public function up()
     {
-        Schema::table('pets', function (Blueprint $table) {
-            $table->string('image')->nullable()->after('user_id'); 
+        Schema::create('func', function (Blueprint $table) {
+            $table->char('name', 64)->default('')->primary();
+            $table->boolean('ret')->default(false);
+            $table->char('dl', 128)->default('');
+            $table->enum('type', ['function', 'aggregate']);
         });
     }
 
@@ -25,8 +28,6 @@ class AddImageToPetTable extends Migration
      */
     public function down()
     {
-        Schema::table('pets', function (Blueprint $table) {
-            $table->dropColumn('image');
-        });
+        Schema::dropIfExists('func');
     }
-}
+};
