@@ -25,6 +25,20 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    public function get(User $reqUser)
+    {
+        $user = Auth::user();
+
+        if ($user['user_type_id'] != 3) {
+            if ($user['id'] != $reqUser.id) {
+                return response()->json(['error' => 'Unauthorized '], 403);
+            }
+
+        }
+
+        return response()->json($reqUser);
+    }
+
 
 
     public function create(Request $request)
@@ -41,8 +55,11 @@ class UserController extends Controller
     public function update(Request $request, $id){
 
         $user = Auth::user();
+
+
+
         if ($user['user_type_id'] != 3) {
-            if ($user['id'] != $id) {
+            if ($user['id'] != $id || $request->input('user_type_id') != null) {
                 return response()->json(['error' => 'Unauthorized '], 403);
             }
 
@@ -54,9 +71,12 @@ class UserController extends Controller
             return response()->json(['message' => 'User not found'], 404);
         }
 
-        if ($request->input('password') != null) {
+        if ($request->input('password') != null && $request->input('password') != '' && $request->input('password') != ' ') {
 
             $request['password'] = Hash::make($request->input('password'));
+        } else {
+            $request['password'] = $user['password'];
+
         }
 
 

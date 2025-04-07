@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pet;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -12,7 +13,7 @@ class PetController extends Controller
     {
         $user = Auth::user();
     
-        if ($user->user_type_id == 3) { // Si es Admin (user_type_id = 3), listar todas las mascotas con su dueño
+        if ($user->user_type_id != 1) { // Si es Admin (user_type_id = 3), listar todas las mascotas con su dueño
             return response()->json(Pet::with('user:id,name')->get());
         }
     
@@ -77,6 +78,17 @@ class PetController extends Controller
 
 
         return response()->json($pet);
+    }
+
+
+    public function getByUser(User $user)
+    {
+
+        // return 1;
+        // $pets = Pet::find($id);
+        $pets = Pet::where('user_id', $user->id)->get();
+
+        return response()->json($pets);
     }
 
     public function delete(Pet $pet)

@@ -11,12 +11,13 @@ use App\Models\UserType;
 
 class AuthController extends Controller
 {
-    public function register(Request $request){
+    public function register(Request $request, $user_type_id){
 
         $user = User::create([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'password' => Hash::make($request->input('password'))
+            'password' => Hash::make($request->input('password')),
+            'user_type_id' => $user_type_id
         ]);
 
         return $user;
@@ -33,12 +34,6 @@ class AuthController extends Controller
         $user = Auth::user();
         $user['token'] = $user->createToken('token')->plainTextToken;
 
-        // if ($user['is_active']==false) {
-        //     return response([
-        //         'message' => 'Invalid credentials'
-        //     ], Response::HTTP_UNAUTHORIZED);
-        // }
-
         $cookie = cookie('jwt', $user['token'], 30, '/', null, true, false);
         return response([
             'message' => 'Success',
@@ -47,19 +42,23 @@ class AuthController extends Controller
     }
 
     public function user(){
-        
-        $user = Auth::user();
-        $user['token'] = $user->createToken('token')->plainTextToken;
+        try {
+            $user = Auth::user();
+            $user['token'] = $user->createToken('token')->plainTextToken;
+            
+            if ($user['is_active']==false) {
+                return response([
+                    'message' => 'Invalid credentials'
+                ], Response::HTTP_UNAUTHORIZED);
+            }
+            // return $user;
 
-        if ($user['is_active']==false) {
-            return response([
-                'message' => 'Invalid credentials'
-            ], Response::HTTP_UNAUTHORIZED);
-        }
-
-        // $type = 
-        $user['type'] = UserType::where('id', '=', $user->user_type_id)->get()[0]['name'];
-        return $user;
+            // $type = 
+            $user['type'] = UserType::where('id', '=', $user->user_type_id)->get()[0]['name'];
+            return $user;
+        } catch (Exception $e) {
+            return $e;
+}
 
     }
 
