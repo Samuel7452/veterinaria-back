@@ -7,11 +7,37 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Response;
 use App\Models\UserType;
+
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 // use illuminate\cookie;
 
 class AuthController extends Controller
 {
     public function register(Request $request, $user_type_id){
+
+
+        $validator = Validator::make($request->all(), [
+            'name' => [
+                'required',
+                'min:3',
+                'regex:/^[a-zA-ZÁÉÍÓÚáéíóúñÑ\s]+$/'
+            ],
+            'email' => 'required|email:rfc,dns',
+            'password' => [
+                'required',
+                'min:8',
+                'regex:/[!@#$%^&*(),.?":{}|<>]/',
+            ],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
 
         $user = User::create([
             'name' => $request->input('name'),

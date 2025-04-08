@@ -40,6 +40,25 @@ class UserController extends Controller
     }
 
 
+    public function getVets()
+    {
+
+
+        $vets = user::where('user_type_id', '=', '2')->get();
+
+        // $user = Auth::user();
+
+        // if ($user['user_type_id'] != 3) {
+        //     if ($user['id'] != $reqUser.id) {
+        //         return response()->json(['error' => 'Unauthorized '], 403);
+        //     }
+
+        // }
+
+        return response()->json($vets);
+    }
+
+
 
     public function create(Request $request)
     {

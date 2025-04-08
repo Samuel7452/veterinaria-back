@@ -18,10 +18,8 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::post('login', [\App\Http\Controllers\AuthController::class, 'login']);
-Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
-// Route::post('register', function () {
-//     return view('register')->with('user_type_id', 1);
-// });
+// Route::post('register', [\App\Http\Controllers\AuthController::class, 'register']);
+
 
 Route::post('register', function (Request $request) {
     return App::call([\App\Http\Controllers\AuthController::class, 'register'], [
@@ -33,12 +31,6 @@ Route::post('register', function (Request $request) {
 
 Route::middleware('auth:sanctum')->group(function () {
     
-    // Route::post('register/veterinarian/', [\App\Http\Controllers\AuthController::class, 'register({2})']);
-
-    // Route::post('register/veterinarian/', function () {
-    //     return view('register')->with('user_type_id', 2);
-    // });
-
     Route::post('register/veterinarian/', function (Request $request) {
         return App::call([\App\Http\Controllers\AuthController::class, 'register'], [
             'request' => $request,
@@ -52,6 +44,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('user/update/{user}', [\App\Http\Controllers\UserController::class, 'update']);
     Route::post('logout', [\App\Http\Controllers\AuthController::class, 'logout']);
     Route::get('user/get/{reqUser}', [\App\Http\Controllers\UserController::class, 'get']);
+    Route::get('user/getVets', [\App\Http\Controllers\UserController::class, 'getVets']);
     
     // pets related routes
     Route::get('pet', [\App\Http\Controllers\PetController::class, 'pet']);
@@ -71,7 +64,12 @@ Route::middleware('auth:sanctum')->group(function () {
     //  Citations related routes
     Route::post('citation/create', [\App\Http\Controllers\CitationController::class, 'create']);
     Route::get('citation/getByUser/{user}', [\App\Http\Controllers\CitationController::class, 'getByUser']);
-
+    Route::get('citation/getByVet/{user}', [\App\Http\Controllers\CitationController::class, 'getByVet']);
+    Route::get('citation/getBussyDates/{user}', [\App\Http\Controllers\CitationController::class, 'getBussyDates']);
+    Route::patch('citation/update/{citation}', [\App\Http\Controllers\CitationController::class, 'update']);
+    Route::delete('citation/delete/{citation}', [\App\Http\Controllers\CitationController::class, 'delete']);
+    Route::get('citation/index', [\App\Http\Controllers\CitationController::class, 'index']);
+    
 });
  
 Route::middleware(['auth', 'admin'])->group(function () {

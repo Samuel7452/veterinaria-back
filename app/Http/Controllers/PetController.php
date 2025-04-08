@@ -6,6 +6,8 @@ use App\Models\Pet;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Citation;
+use Illuminate\Http\Response;
 
 class PetController extends Controller
 {
@@ -83,9 +85,6 @@ class PetController extends Controller
 
     public function getByUser(User $user)
     {
-
-        // return 1;
-        // $pets = Pet::find($id);
         $pets = Pet::where('user_id', $user->id)->get();
 
         return response()->json($pets);
@@ -100,7 +99,15 @@ class PetController extends Controller
             ], Response::HTTP_UNAUTHORIZED);
         }
 
-        // return response()->json(['message' => $user['user_type_id']]);
+
+        $citations = Citation::where('pet_id', $pet->id)->exists();
+        
+        if ($citations) {
+            return response([
+                'message' => 'La mascota tiene citas asignadas, eliminalas antes de eliminar la mascota'
+            ], Response::HTTP_UNAUTHORIZED);
+        }
+
         if ($pet->user_id !== $user['id'] && $user['user_type_id'] != 3 || $user['user_type_id'] == 2 && $user['user_type_id'] != 3) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }

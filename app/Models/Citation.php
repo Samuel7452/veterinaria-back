@@ -10,7 +10,7 @@ class Citation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['pet_id', 'vet_id', 'date', 'is_active'];
+    protected $fillable = ['pet_id', 'vet_id', 'date', 'is_active', 'owner_id'];
 
     public function pet()
     {
